@@ -78,6 +78,8 @@
     try{
       const r = await fetch(API + "/api/clean", { method:"POST", body: form });
       if(!r.ok){ let err="Erreur serveur"; try{err=(await r.json()).error||err;}catch{}; throw new Error(err+" (HTTP "+r.status+")"); }
+      const report = r.headers.get("X-DocSafe-Report") || "";
+if (report) { msg.textContent = "Terminé ✔️ — " + report; }
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
