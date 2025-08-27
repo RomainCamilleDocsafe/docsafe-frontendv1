@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DocSafe — Bêta V1 (gratuite)</title>
+<style>
+  :root{--bg:#0b1222;--card:#0f1a36;--line:#253364;--text:#e6ecff;--muted:#9db2ff;--brand:#2563EB;--accent:#0ea5e9;}
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 16px}
+  .hero h1{font-size:32px;margin:0 0 6px} .hero p{margin:4px 0 0;color:var(--muted)}
+  .banner{border:1px dashed var(--line);background:#09122a;padding:10px 12px;border-radius:10px;margin:16px 0;color:var(--muted);font-size:14px}
+  .grid{display:grid;gap:16px;grid-template-columns:1fr; margin:16px 0}
+  @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .uploader{text-align:center} input[type=file]{display:block;margin:8px auto 12px}
+  .btn{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;padding:10px 16px;border:0;border-radius:10px;font-weight:700;cursor:pointer}
+  .btn.alt{background:var(--accent);color:#001}
+  .note{font-size:13px;color:var(--muted);margin-top:8px}
+  .features{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:900px){.features{grid-template-columns:repeat(4,1fr)}}
+  .feat{background:#0d1630;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px}
+  footer{margin:26px 0;font-size:13px;color:var(--muted)} footer a{color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>DocSafe — Bêta V1 (gratuite)</h1>
+    <p>Nettoyez vos documents avant envoi (parcours et vitesse).</p>
+  </div>
+
+  <div class="banner">Bêta technique : nous renvoyons une copie « _cleaned ». Le nettoyage avancé (grammaire, typographie, métadonnées, humanizer) arrive en V2/V3.</div>
+
+  <div class="features">
+    <div class="feat">⚡ Simple — 1 clic</div>
+    <div class="feat">🚀 Rapide — immédiat</div>
+    <div class="feat">🧩 PDF/DOCX/PPTX/XLSX</div>
+    <div class="feat">🔒 Aucune sauvegarde serveur (bêta)</div>
+  </div>
+
+  <div class="grid">
+    <div class="card uploader">
+      <h3 style="margin-top:0">Clean & Download</h3>
+      <input id="file" type="file" />
+      <button id="cleanBtn" class="btn">Nettoyer mon fichier</button>
+      <div id="msg" class="note"></div>
+      <div id="out" style="margin-top:12px"></div>
+      <div class="note">Limites bêta : 25 MB max / fichier.</div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Rejoindre la bêta privée</h3>
+      <p class="note">Laissez votre email pour accéder aux nouveautés.</p>
+      <a class="btn alt" href="https://forms.gle/" target="_blank" rel="noopener">Join the Beta</a>
+    </div>
+  </div>
+
+  <footer>
+    Questions ? contact.docsafe@gmail.com
+  </footer>
+</div>
+
+<script>
+  const API = "https://docsafe-backendv1.onrender.com"
+  const fileEl = document.getElementById('file');
+  const btn = document.getElementById('cleanBtn');
+  const msg = document.getElementById('msg');
+  const out = document.getElementById('out');
+
+  (async()=>{ try{ await fetch(API + "/health", {cache:"no-store"});}catch(e){} })(); // réveille Render
+
+  btn.onclick = async () => {
+    out.innerHTML = "";
+    const f = fileEl.files?.[0];
+    if(!f){ msg.textContent = "Choisissez un fichier."; return; }
+    if(f.size > 25 * 1024 * 1024){ msg.textContent = "Fichier trop volumineux (> 25 MB)."; return; }
+
+    msg.textContent = "Traitement…";
+    const form = new FormData(); form.append("file", f);
+    try{
+      const r = await fetch(API + "/api/clean", { method:"POST", body: form });
+      if(!r.ok){ let err="Erreur serveur"; try{err=(await r.json()).error||err;}catch{}; throw new Error(err+" (HTTP "+r.status+")"); }
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const ext = (f.name.split(".").pop()||"").toLowerCase();
+      a.download = f.name.replace(/\.[^.]+$/,"") + "_cleaned." + ext;
+      a.textContent = "Télécharger le fichier nettoyé";
+      a.className = "btn alt";
+      out.appendChild(a);
+      msg.textContent = "Terminé ✔️";
+    }catch(e){
+      msg.textContent = e.message.includes("Failed to fetch")
+        ? "Réseau/CORS : vérifie l’URL API (HTTPS) et réessaie après /health."
+        : e.message;
+      console.error(e);
+    }
+  };
+</script>
