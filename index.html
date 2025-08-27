@@ -1,143 +1,100 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>DocSafe — Bêta V1 (gratuite)</title>
-    <style>
-      :root{
-        --bg:#0b1222;--card:#0f1a36;--line:#253364;--text:#e6ecff;
-        --muted:#9db2ff;--brand:#2563EB;--accent:#0ea5e9;
-      }
-      *{box-sizing:border-box}
-      body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
-      .wrap{max-width:1000px;margin:0 auto;padding:28px 16px}
-      .hero h1{font-size:32px;margin:0 0 6px}
-      .hero p{margin:4px 0 0;color:var(--muted)}
-      .banner{border:1px dashed var(--line);background:#09122a;padding:10px 12px;border-radius:10px;margin:16px 0;color:var(--muted);font-size:14px}
-      .features{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
-      @media(min-width:900px){.features{grid-template-columns:repeat(4,1fr)}}
-      .feat{background:#0d1630;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px}
-      .grid{display:grid;gap:16px;grid-template-columns:1fr;margin:16px 0}
-      @media(min-width:900px){.grid{grid-template-columns:1.2fr .8fr}}
-      .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
-      .uploader{text-align:center}
-      input[type=file]{display:block;margin:8px auto 12px;color:var(--text)}
-      .btn{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;padding:10px 16px;border:0;border-radius:10px;font-weight:700;cursor:pointer}
-      .btn.alt{background:var(--accent);color:#001}
-      .note{font-size:13px;color:var(--muted);margin-top:8px}
-      .tabs{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-      .tab{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted)}
-      footer{margin:26px 0;font-size:13px;color:var(--muted)}
-      footer a{color:var(--muted)}
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <div class="hero">
-        <h1>DocSafe — Bêta V1 (gratuite)</h1>
-        <p>Nettoyez vos documents avant envoi (parcours et vitesse).</p>
-      </div>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DocSafe — Bêta V1</title>
+<style>
+  :root { --bg:#0b1220; --panel:#0f1730; --txt:#e6e9f2; --muted:#92a0bd; --acc:#3b82f6; --ok:#16a34a; --err:#ef4444; }
+  html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;}
+  .wrap{max-width:980px;margin:40px auto;padding:0 16px;}
+  h1{font-size:28px;margin:0 0 6px}
+  .muted{color:var(--muted);font-size:14px}
+  .cards{display:flex;gap:12px;margin:16px 0 20px;flex-wrap:wrap}
+  .chip{background:var(--panel);border:1px solid #1e2a48;border-radius:12px;padding:10px 14px;font-size:14px}
+  .panel{background:var(--panel);border:1px solid #1e2a48;border-radius:14px;padding:18px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .btn{background:var(--acc);border:none;color:white;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  input[type=file]{background:#0b132b;border:1px solid #1f2a4a;color:#c7d2fe;padding:8px;border-radius:8px}
+  .msg{margin-top:8px;font-size:14px}
+  .alt{background:#0b132b;border:1px solid #2a3a67;color:#c7d2fe}
+  .report{margin-top:12px;font-size:13px;color:#a9b7d9;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DocSafe — Bêta V1 (gratuite)</h1>
+  <div class="muted">Nettoyez vos documents avant envoi (grammaire & typographie basiques, métadonnées, mise en forme). PDF/DOCX/PPTX/XLSX/TXT.</div>
 
-      <div class="banner">
-        Bêta technique : nous renvoyons une copie « _cleaned ». Le nettoyage avancé (grammaire, typographie,
-        métadonnées, humanizer) arrive en V2/V3.
-      </div>
+  <div class="cards">
+    <div class="chip">⚡ 1 clic</div>
+    <div class="chip">🚀 Immédiat</div>
+    <div class="chip">🧩 PDF/DOCX/PPTX/XLSX/TXT</div>
+  </div>
 
-      <div class="features">
-        <div class="feat">⚡ Simple — 1 clic</div>
-        <div class="feat">🚀 Rapide — immédiat</div>
-        <div class="feat">🧩 PDF/DOCX/PPTX/XLSX (+ TXT)</div>
-        <div class="feat">🔒 Aucune sauvegarde serveur (bêta)</div>
-      </div>
-
-      <div class="grid">
-        <div class="card uploader">
-          <h3 style="margin-top:0">Clean & Download</h3>
-          <input id="file" type="file" />
-          <button id="cleanBtn" class="btn">Nettoyer mon fichier</button>
-          <div id="msg" class="note"></div>
-          <div id="out" style="margin-top:12px"></div>
-          <div class="note">Limites bêta : 25 MB max / fichier.</div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin-top:0">Rejoindre la bêta privée</h3>
-          <p class="note">Laissez votre email pour accéder aux nouveautés.</p>
-          <!-- Remplace ce lien par ton Google Form -->
-          <a class="btn alt" href="https://forms.gle/" target="_blank" rel="noopener">Join the Beta</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0">Feuille de route</h3>
-        <div class="tabs">
-          <span class="tab">V1 (maintenant) : copie « _cleaned » + métadonnées vidées (PDF/Office)</span>
-          <span class="tab">V2 (4–6 sem.) : correction basique + rapport</span>
-          <span class="tab">V3 (6–12 sem.) : humanizer anti-détection IA + intégrations Word/Outlook/Teams</span>
-        </div>
-      </div>
-
-      <footer>
-        Questions ? contact.docsafe@gmail.com •
-        <a href="/privacy.html">Confidentialité</a> •
-        <a href="/terms.html">Conditions</a>
-      </footer>
+  <div class="grid">
+    <div class="panel">
+      <h3>Clean & Download</h3>
+      <input id="f" type="file" />
+      <button id="go" class="btn" style="margin-left:8px">Nettoyer mon fichier</button>
+      <div id="msg" class="msg"></div>
+      <div id="out" class="report"></div>
     </div>
+    <div class="panel">
+      <h3>Rejoindre la bêta</h3>
+      <div class="muted">Laissez votre email sur LinkedIn / DM pour accès prioritaire.</div>
+    </div>
+  </div>
 
-    <script>
-      // ⚠️ Remplace par TON URL Render exacte :
-      const API = "https://docsafe-backendv1.onrender.com";
+  <div class="panel" style="margin-top:16px">
+    <strong>Limites bêta :</strong> 25&nbsp;MB / fichier, 20 fichiers / jour / IP.
+  </div>
+</div>
 
-      const fileEl = document.getElementById('file');
-      const btn = document.getElementById('cleanBtn');
-      const msg = document.getElementById('msg');
-      const out = document.getElementById('out');
+<script>
+  // ⚠️ Mets l’URL de ton backend Render ici :
+  const API = "https://docsafe-backendv1.onrender.com"; // ex: https://docsafe-backendv1.onrender.com
 
-      // Réveille Render (free plan) dès le chargement
-      (async()=>{ try{ await fetch(API + "/health", {cache:"no-store"});}catch(e){} })();
+  const f   = document.getElementById("f");
+  const go  = document.getElementById("go");
+  const msg = document.getElementById("msg");
+  const out = document.getElementById("out");
 
-      btn.onclick = async () => {
-        out.innerHTML = "";
-        const f = fileEl.files?.[0];
-        if(!f){ msg.textContent = "Choisissez un fichier."; return; }
-        if(f.size > 25 * 1024 * 1024){ msg.textContent = "Fichier trop volumineux (> 25 MB)."; return; }
+  go.onclick = async () => {
+    out.textContent = "";
+    msg.textContent = "";
+    if (!f.files || f.files.length === 0) {
+      msg.textContent = "Choisissez un fichier.";
+      return;
+    }
+    const file = f.files[0];
+    const form = new FormData();
+    form.append("file", file);
 
-        msg.textContent = "Traitement…";
-        const form = new FormData(); 
-        form.append("file", f);
+    go.disabled = true;
+    msg.textContent = "Traitement en cours…";
 
-        try {
-          const r = await fetch(API + "/api/clean", { method:"POST", body: form });
-          if(!r.ok){ 
-            let err = "Erreur serveur"; 
-            try{ err = (await r.json()).error || err; }catch{}; 
-            throw new Error(err + " (HTTP " + r.status + ")"); 
-          }
+    try {
+      const r = await fetch(API + "/api/clean", { method:"POST", body: form });
+      if (!r.ok) {
+        let err = "Erreur serveur";
+        try { err = (await r.json()).error || err; } catch {}
+        throw new Error(err + " (HTTP " + r.status + ")");
+      }
+      const report = r.headers.get("X-DocSafe-Report");
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
 
-          // ⭐ Récupère le mini-rapport envoyé par le backend
-          const report = r.headers.get("X-DocSafe-Report") || "";
+      const a = document.createElement("a");
+      a.href = url;
+      const ext = (file.name.split(".").pop()||"").toLowerCase();
+      a.download = file.name.replace(/\.[^.]+$/,"") + "_cleaned." + ext;
+      a.textContent = "Télécharger le fichier nettoyé";
+      a.className = "btn alt";
+      out.appendChild(a);
 
-          const blob = await r.blob();
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          const ext = (f.name.split(".").pop()||"").toLowerCase();
-          a.download = f.name.replace(/\.[^.]+$/,"") + "_cleaned." + ext;
-          a.textContent = "Télécharger le fichier nettoyé";
-          a.className = "btn alt";
-          out.appendChild(a);
-
-          // Affiche le rapport s’il existe
-          msg.textContent = report ? `Terminé ✔️ — ${report}` : "Terminé ✔️";
-
-        } catch(e) {
-          msg.textContent = e.message.includes("Failed to fetch")
-            ? "Réseau/CORS : vérifie l’URL API (HTTPS) et réessaie après /health."
-            : e.message;
-          console.error(e);
-        }
-      };
-    </script>
-  </body>
-</html>
+      if (report) {
+        const p = document.createElement("div");
+        p.className = "report";
+        p.textContent =
