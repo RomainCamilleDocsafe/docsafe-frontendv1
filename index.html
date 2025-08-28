@@ -5,35 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>DocSafe — Bêta V1</title>
 <style>
-  :root { --bg:#0b1220; --panel:#0f1730; --txt:#e6e9f2; --muted:#92a0bd; --acc:#3b82f6; --ok:#16a34a; --err:#ef4444; }
-  html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;}
-  .wrap{max-width:980px;margin:40px auto;padding:0 16px;}
-  h1{font-size:28px;margin:0 0 6px}
+  :root { --bg:#0b1220; --panel:#0f1730; --txt:#e6e9f2; --muted:#92a0bd; --acc:#3b82f6; }
+  html,body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Inter,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:960px;margin:40px auto;padding:0 16px}
+  h1{margin:0 0 6px;font-size:28px}
   .muted{color:var(--muted);font-size:14px}
-  .cards{display:flex;gap:12px;margin:16px 0 20px;flex-wrap:wrap}
-  .chip{background:var(--panel);border:1px solid #1e2a48;border-radius:12px;padding:10px 14px;font-size:14px}
-  .panel{background:var(--panel);border:1px solid #1e2a48;border-radius:14px;padding:18px}
-  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-  .btn{background:var(--acc);border:none;color:white;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
+  .panel{background:#0f1730;border:1px solid #1e2a48;border-radius:14px;padding:18px;margin-top:16px}
+  .btn{background:var(--acc);border:none;color:#fff;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
   .btn:disabled{opacity:.6;cursor:not-allowed}
   input[type=file]{background:#0b132b;border:1px solid #1f2a4a;color:#c7d2fe;padding:8px;border-radius:8px}
   .msg{margin-top:8px;font-size:14px}
-  .alt{background:#0b132b;border:1px solid #2a3a67;color:#c7d2fe}
   .report{margin-top:12px;font-size:13px;color:#a9b7d9;white-space:pre-wrap}
+  .alt{background:#0b132b;border:1px solid #2a3a67;color:#c7d2fe}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>DocSafe — Bêta V1 (gratuite)</h1>
-  <div class="muted">Nettoyez vos documents avant envoi (grammaire & typographie basiques, métadonnées, mise en forme). PDF/DOCX/PPTX/XLSX/TXT.</div>
+  <div class="wrap">
+    <h1>DocSafe — Bêta V1 (gratuite)</h1>
+    <div class="muted">Nettoyez vos documents avant envoi (grammaire & typographie basiques, métadonnées, mise en forme). PDF/DOCX/PPTX/XLSX/TXT.</div>
 
-  <div class="cards">
-    <div class="chip">⚡ 1 clic</div>
-    <div class="chip">🚀 Immédiat</div>
-    <div class="chip">🧩 PDF/DOCX/PPTX/XLSX/TXT</div>
-  </div>
-
-  <div class="grid">
     <div class="panel">
       <h3>Clean & Download</h3>
       <input id="f" type="file" />
@@ -41,19 +31,11 @@
       <div id="msg" class="msg"></div>
       <div id="out" class="report"></div>
     </div>
-    <div class="panel">
-      <h3>Rejoindre la bêta</h3>
-      <div class="muted">Laissez votre email sur LinkedIn / DM pour accès prioritaire.</div>
-    </div>
-  </div>
 
-  <div class="panel" style="margin-top:16px">
-    <strong>Limites bêta :</strong> 25&nbsp;MB / fichier, 20 fichiers / jour / IP.
+    <div class="panel"><strong>Limites bêta :</strong> 25 MB / fichier, 20 fichiers / jour / IP.</div>
   </div>
-</div>
 
 <script>
-  // ⚠️ Mets l’URL de ton backend Render ici :
   const API = "https://docsafe-backendv1.onrender.com";
 
   const f   = document.getElementById("f");
@@ -61,13 +43,15 @@
   const msg = document.getElementById("msg");
   const out = document.getElementById("out");
 
-  go.onclick = async () => {
+  go.addEventListener("click", async () => {
     out.textContent = "";
     msg.textContent = "";
+
     if (!f.files || f.files.length === 0) {
       msg.textContent = "Choisissez un fichier.";
       return;
     }
+
     const file = f.files[0];
     const form = new FormData();
     form.append("file", file);
@@ -76,15 +60,16 @@
     msg.textContent = "Traitement en cours…";
 
     try {
-      const r = await fetch(API + "/api/clean", { method:"POST", body: form });
+      const r = await fetch(API + "/api/clean", { method: "POST", body: form });
       if (!r.ok) {
         let err = "Erreur serveur";
         try { err = (await r.json()).error || err; } catch {}
         throw new Error(err + " (HTTP " + r.status + ")");
       }
-      const report = r.headers.get("X-DocSafe-Report");
+
+      const report = r.headers.get("X-DocSafe-Report") || "";
       const blob = await r.blob();
-      const url = URL.createObjectURL(blob);
+      const url  = URL.createObjectURL(blob);
 
       const a = document.createElement("a");
       a.href = url;
@@ -97,4 +82,21 @@
       if (report) {
         const p = document.createElement("div");
         p.className = "report";
-        p.textContent =
+        p.textContent = "Rapport : " + report;
+        out.appendChild(p);
+      }
+
+      msg.textContent = "Terminé ✔️";
+    } catch (e) {
+      console.error(e);
+      msg.textContent = e.message.includes("Failed to fetch")
+        ? "Réseau/CORS : vérifie l’URL API et réessaie (ton /health répond bien ✅)."
+        : e.message;
+    } finally {
+      go.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
+
